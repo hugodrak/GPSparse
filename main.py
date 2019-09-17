@@ -32,33 +32,41 @@ def get_data(compares):
 
     for key, value in data.items():
         for v in value:
-            if v[0] == "b'$GPGSA":
-                hej = ""
-            if v[0] == "b'$GPGGA":
-                hej = 0
+            # if v[0] == "b'$GPGSA":
+            #     _ = ""
+            # if v[0] == "b'$GPGGA":
+            #     _ = 0
+            
+            # Currently only using GPRMC
             if v[0] == "b'$GPRMC":
+
                 # A is valid, V-invalid
                 if v[2] == "A":
+                    # Time rounded to int
                     if parsed_data[0] > 0:
                         parsed_data[0] = round((parsed_data[0]+float(v[1]))/2)
                     else:
                         parsed_data[0] = round(float(v[1]))
 
+                    # Latitude rounded to 6 decimals
                     if parsed_data[1] > 0:
                         parsed_data[1] = round((parsed_data[1]+float(v[3])*0.01)/2, 6)
                     else:
                         parsed_data[1] = round(float(v[3])*0.01, 6)
 
+                    # Longitude rounded to 6 decimals
                     if parsed_data[2] > 0:
                         parsed_data[2] = round((parsed_data[2]+float(v[5])*0.01)/2, 6)
                     else:
                         parsed_data[2] = round(float(v[5])*0.01, 6)
 
+                    # Speed in Knot => metres per second, rounded to 2 decimals
                     if parsed_data[3] > 0:
                         parsed_data[3] = round((parsed_data[3]+float(v[7])*0.5144447)/2, 2)
                     else:
                         parsed_data[3] = round(float(v[7])*0.5144447, 2)
 
+                    # Course rounded to 1 decimal
                     if parsed_data[4] > 0:
                         parsed_data[4] = round((parsed_data[4]+float(v[8]))/2, 1)
                     else:
