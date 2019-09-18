@@ -1,7 +1,15 @@
-import serial, time
+import serial, time, os, sys
+logs = 0
+for file in os.listdir("./logs/"):
+    if file.endswith(".csv"):
+        logs += 1
 
-open("log.csv", "w").write("logCreationTime:"+str(time.time())+"\n")
-ser = serial.Serial('/dev/ttyUSB0', 4800)
+FILE_NAME = "./logs/%s.csv"%str(logs+1)
+SERIAL_PATH = sys.argv[1]
+print("Log file:", FILE_NAME)
+
+open(FILE_NAME, "w").write("logCreationTime:"+str(round(time.time()))+"\n")
+ser = serial.Serial(SERIAL_PATH, 4800)
 def get_data(compares):
     keep_searching = True
     sufficient = {}
@@ -71,11 +79,14 @@ def get_data(compares):
                         parsed_data[4] = round((parsed_data[4]+float(v[8]))/2, 1)
                     else:
                         parsed_data[4] = round(float(v[8]), 1)
-
+                else:
+                    print("No Connection! Sleeping 20s")
+                    time.sleep(20)
+                    return []
     return parsed_data
 
 while True:
-    file = open("log.csv", "a")
+    file = open(FILE_NAME, "a")
     file.write(str(get_data(3)))
     file.write("\n")
     file.close()
