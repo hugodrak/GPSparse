@@ -10,6 +10,7 @@ print("Log file:", FILE_NAME)
 
 open(FILE_NAME, "w").write("logCreationTime:"+str(round(time.time()))+"\n")
 ser = serial.Serial(SERIAL_PATH, 4800)
+
 def get_data(compares):
     keep_searching = True
     sufficient = {}
@@ -44,7 +45,7 @@ def get_data(compares):
             #     _ = ""
             # if v[0] == "b'$GPGGA":
             #     _ = 0
-            
+
             # Currently only using GPRMC
             if v[0] == "b'$GPRMC":
 
@@ -80,14 +81,14 @@ def get_data(compares):
                     else:
                         parsed_data[4] = round(float(v[8]), 1)
                 else:
-                    print("No Connection! Sleeping 20s")
+                    print("No Connection! Status: V, Sleeping 20s")
                     time.sleep(20)
                     return []
     return parsed_data
 
 while True:
     file = open(FILE_NAME, "a")
-    file.write(str(get_data(3)))
+    file.write(','.join(map(str, get_data(3))))
     file.write("\n")
     file.close()
     # time.sleep(2)
