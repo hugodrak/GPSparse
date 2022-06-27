@@ -1,5 +1,3 @@
-*.csv
-*.txt
 /logs/*
 __pycache__
 notes
