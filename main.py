@@ -1,4 +1,8 @@
-import serial, time, os, sys
+import serial
+import time
+import os
+import sys
+import re
 logs = 0
 for file in os.listdir("./logs/"):
     if file.endswith(".csv"):
@@ -19,6 +23,7 @@ def get_data(compares):
     while keep_searching:
         line = str(ser.readline())
         identifier = line[2:8]
+        print(line)
         if identifier == "$GPGSA":
             data['GPGSA'].append(line.split(','))
         if identifier == "$GPGGA":
@@ -59,7 +64,9 @@ def get_data(compares):
 
                     # Latitude rounded to 6 decimals
                     if parsed_data[1] > 0:
-                        parsed_data[1] = round((parsed_data[1]+float(v[3])*0.01)/2, 6)
+                        lat_sp = v[3].split(".")
+                        parsed_data[1] = round(float(lat_sp[0][:-2]) + float(f"{lat_sp[0][-2:]}.{lat_sp[1]}"),6)
+                        #parsed_data[1] = round((parsed_data[1]+float(v[3])*0.01)/2, 6)
                     else:
                         parsed_data[1] = round(float(v[3])*0.01, 6)
 
